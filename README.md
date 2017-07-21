@@ -20,3 +20,19 @@ This image can be configured by means of environment variables, that one can set
 Besides the [inherited ones](https://github.com/pires/docker-elasticsearch#environment-variables), this container image provides the following:
 
 * `DISCOVERY_SERVICE` - the service to be queried for through DNS.
+
+## Auth using Search Guard plug in
+
+A basic configuration is included which defines two roles:
+admin        - can do everything
+service-acct - can do CRUD on all indices and CREATE_INDEX
+
+There are users defined for each role as well, see the config/sq_internal_users.yml to modify those.
+
+When the container is up and running, you need to initialize the users by issuing the following command
+( this requires downloading the sgadmin tool from searchguard or you can bash onto the container and run it there )
+
+Do a docker ps to get the port to use below (if ports are mapped), note that this is 9300 port (node communication), not the 9200 port.
+
+$./tools/sgadmin.sh  -h localhost -p 9300 -ts /elasticsearch/certs/truststore.jks -ks /elasticsearch/certs/node-keystore.jks -icl -nhnv -cd /elasticsearch/config
+
